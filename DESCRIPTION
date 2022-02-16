@@ -1,0 +1,27 @@
+Package: lidUrb
+Type: Package
+Title: Terrestrial and Mobile Laser Scaning processing
+Version: 0.2.0
+Author: Bastien Lecigne
+Maintainer: Bastien Lecigne <lecignebastien@gmail.com>
+Description: Process LiDAR data in R.
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+Imports: 
+    cppRouting,
+    data.table,
+    dbscan,
+    fastcluster,
+    FNN,
+    geometry,
+    ggplot2,
+    igraph,
+    lidR,
+    Morpho,
+    Rcpp,
+    reticulate,
+    Rfast,
+    rgl,
+    TreeLS
+RoxygenNote: 7.1.1
