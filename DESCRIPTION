@@ -1,7 +1,7 @@
 Package: lidUrb
 Type: Package
 Title: Terrestrial and Mobile Laser Scaning processing
-Version: 0.2.0
+Version: 0.3.0
 Author: Bastien Lecigne
 Maintainer: Bastien Lecigne <lecignebastien@gmail.com>
 Description: Process LiDAR data in R.
@@ -23,5 +23,5 @@ Imports:
     reticulate,
     Rfast,
     rgl,
-    TreeLS
+    Rvcg
 RoxygenNote: 7.1.1
