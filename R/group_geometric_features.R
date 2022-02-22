@@ -28,7 +28,7 @@
 
 group_geom_features = function(las,group,feat_list){
 
-  . = .N = N = X = Y = Z = e1 = e2 = e3 = eigen_values = index = NULL
+  . = .N = N = X = Y = Z = e1 = e2 = e3 = eigen_values = ..group = index = NULL
 
   # c++ function for faster computation
   Rcpp::sourceCpp(code = "

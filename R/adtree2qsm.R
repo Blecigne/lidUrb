@@ -12,12 +12,12 @@
 #' @examples
 #' \donttest{
 #' # import the obj file output from adTree
-#' file = system.file("extdata", "adtree_qsm.obj", package="lidUrb")
+#' file = system.file("extdata", "adtree_qsm", package="lidUrb")
 #' mesh = Morpho::obj2mesh(file)
 #'
 #' # plot the original mesh
 #' rgl::open3d()
-#' rgl::shade3d(mesh,col="black",add=T)
+#' rgl::shade3d(mesh,col="black",add=TRUE)
 #'
 #' # transform the adTree mesh into a qsm file, simplify the mesh and compute
 #' # some woody structure features
@@ -25,11 +25,11 @@
 #'
 #' # plot the simplified mesh
 #' rgl::open3d()
-#' rgl::shade3d(qsm$mesh,col="black",add=T)
+#' rgl::shade3d(qsm$mesh,col="black",add=TRUE)
 #'
 #' # plot simplified mesh with colored by cylinder ID
 #' rgl::open3d()
-#' rgl::shade3d(qsm$mesh,col=rep(qsm$qsm$cyl_ID,each=20),meshColor = "faces",add=T)
+#' rgl::shade3d(qsm$mesh,col=rep(qsm$qsm$cyl_ID,each=20),meshColor = "faces",add=TRUE)
 #'
 #' # woodu structure features
 #' qsm$DHB

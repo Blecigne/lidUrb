@@ -1,8 +1,6 @@
-
 #' Computes indices for leaf / wood segmentation
 #'
 #' @param las a LAS file.
-#' @param k integer. The number of nearest neighbors to use in the geometric features computation
 #' @param search_radius numeric. The searching distance to compute geometric features.
 #'                      Note that \code{2*search_radius} is used to compute linearity
 #'                      that which provides better estimates.
@@ -59,23 +57,20 @@
 #' lidR::plot(las,color="wood",size=2,colorPalette = c("chartreuse4","cornsilk2"))
 #' }
 
-LW_segmentation_dbscan = function(las,k=10L,search_radius = 0.05, dbscan_eps = 0.03, min_cluster_size = 10L, reclass_trunk_th = 0.5){
+LW_segmentation_dbscan = function(las,search_radius = 0.05, dbscan_eps = 0.03, min_cluster_size = 10L, reclass_trunk_th = 0.5){
 
   . = .GRP = .N = Linearity_G = N = Planarity_G = SoD = Sphericity_G =
-  Surface_variation = X = Y = Z = cluster = label = p_wood = NULL
+    Surface_variation = X = Y = Z = cluster = k = label = p_wood = NULL
 
   if(class(las)[1] != "LAS") stop("las must be of type LAS")
-  if(!is.integer(k) | k <= 0) stop("k must be an integer >= 1")
   if(!is.integer(min_cluster_size) | min_cluster_size <= 0) stop("min_cluster_size must be an integer >= 1")
   if(!is.numeric(search_radius) | search_radius <= 0) stop("search_radius must be numeric >= 0")
   if(!is.numeric(dbscan_eps) | dbscan_eps <= 0) stop("dbscan_eps must be numeric >= 0")
   if(!is.numeric(reclass_trunk_th)) stop("reclass_trunk_th must be numeric")
 
-  # compute surface variation if does already exists
-  if(is.null(las@data$Surface_variation)){
-    las = TreeLS::fastPointMetrics(las,method = TreeLS::ptm.knn(k=k,r=search_radius),which_metrics = c("Curvature"))
-    data.table::setnames(las@data,old="Curvature",new = "Surface_variation")
-  }
+  # compute surface variation
+  las = lidUrb::geom_features(las,search_radius,features_list = c("Surface_variation"))
+
 
   # label the point cloud into three categories based on Wan et al. 2020 criteria
   las@data[,label := 1]
@@ -122,5 +117,3 @@ LW_segmentation_dbscan = function(las,k=10L,search_radius = 0.05, dbscan_eps = 0
 
   return(las)
 }
-
-

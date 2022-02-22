@@ -10,6 +10,8 @@
 #' @references Zhu, Z., Kleinn, C., & Nölke, N. (2020). Towards tree green crown
 #'             volume: a methodological approach using terrestrial laser scanning.
 #'             Remote Sensing, 12(11), 1841.
+#'
+#' @import Rvcg
 #' @export
 #'
 #' @examples
@@ -34,8 +36,9 @@
 #' GCV = lidUrb::green_crown_volume(las)
 #'
 #' # plot the green crown mesh over the original LAS
-#' lidR::plot(las,color="wood",size=2,colorPalette = c("chartreuse4","cornsilk2"),clear_artifacts = FALSE)
-#' rgl::shade3d(GCV$mesh,col = "chartreuse4",add=T)
+#' lidR::plot(las,color="wood",size=2,colorPalette = c("chartreuse4","cornsilk2"),
+#'            clear_artifacts = FALSE)
+#' rgl::shade3d(GCV$mesh,col = "chartreuse4",add=TRUE)
 #'
 #' # green crown volume and area
 #' GCV$Green_crow_volume
@@ -57,6 +60,7 @@ green_crown_volume = function(las,npts_in_clust = 200){
 
   # clustering the leaves point cliud using fastKmeans and defines the number of clusters
   # as the number of points devided by npts_in_clust
+  #leaves[,clusters := lidUrb::fastKmeans(as.matrix(leaves[,1:3]),k=round(nrow(leaves)/npts_in_clust))$class]
   leaves[,clusters := Rvcg::vcgKmeans(as.matrix(leaves[,1:3]),k=round(nrow(leaves)/npts_in_clust))$class]
 
   # number of points per cluster

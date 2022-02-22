@@ -6,7 +6,11 @@
 #' @param distance_th_merge_close_roots numeric. Defines the distance between two roots to be merged. It defines the
 #'                                      euclidean distance threshold, the geodesic distance threshold = 3*distance_th_merge_close_roots
 #'                                      as suggested by Wang et al.
-#' @param correct_elevation logical. Applies a quick correction to elevation to ensure that all tree base are close to Z = 0.
+#' @param correct_elevation character. If \code{correct_elevation = "local"} a local correction of point elevation is performed by locating
+#'                          the tree bases and using it as reference to correct the points elevation. If \code{correct_elevation = "global"} the
+#'                          elevation is corrected relative to the minmum Z value of the point cloud that is set to 0.
+#'                          If \code{correct_elevation = "none"} the Z value is used without transformation (recommended if the point cloud
+#'                          elevation was previously normalized).
 #' @param merge_non_connected logical. If TRUE objects that are disconnected in the graph are merged to the nearest cluster.
 #'
 #' @references Wang, D., Liang, X., Mofack, G. I., & Martin-Ducup, O. (2021). Individual tree extraction from terrestrial laser
@@ -54,8 +58,9 @@
 #' # reduce point density to 0.1 instead of voxelisation as in Wang et al.
 #' las = lidUrb::reduce_point_density(las,0.1)
 #'
-#' # build a knn graph
+#' # build a highly connected knn graph
 #' KNN = lidUrb::knn_graph(las,local_filter = 0.5)
+#' KNN = lidUrb::highly_connected_graph(las,KNN)
 #'
 #' # run the downward clustering following the hybrid graph, parameters are
 #' # guessed after Wang et al. paper
@@ -67,11 +72,11 @@
 #' # plot the result
 #' lidR::plot(las_sub,color="cluster_wang")
 #' }
-
-wang_clustering = function(las,graph,heigth_th_merge_roots = 0.5,distance_th_merge_close_roots = 1,correct_elevation = FALSE,merge_non_connected = TRUE){
+wang_clustering = function(las,graph,heigth_th_merge_roots = 0.5,distance_th_merge_close_roots = 1,correct_elevation = "global",merge_non_connected = TRUE){
 
   . = .GRP = Dij_dist = Euc_dist = X = Y = Z = Z_node1 = Z_node2 = as.dist = cutree = dist =
-  index = is_min = na.omit = nearest_cl = node = node_1 = node_2 = potential = root = root_orig = NULL
+  index = is_min = na.omit = nearest_cl = node = node_1 = node_2 = potential = root = root_orig =
+    ..group = cl = cluster = is.min = norm_Z = NULL
 
   if(class(las)[1] != "LAS") stop("las must be of type LAS")
   if(ncol(graph) != 3) stop("graph must have three columns. Not likely a graph.")
@@ -79,9 +84,11 @@ wang_clustering = function(las,graph,heigth_th_merge_roots = 0.5,distance_th_mer
   if(!is.numeric(heigth_th_merge_roots)) stop("heigth_th_merge_roots must be numeric")
   if(!is.numeric(distance_th_merge_close_roots)) stop("distance_th_merge_close_roots must be numeric")
   if(!is.logical(merge_non_connected)) stop("merge_non_connected must be logical")
+  if(!is.character(correct_elevation)) stop("correct_elevation must be a character string with 'local','global' or 'none'.")
+  if(!correct_elevation %in% c("local","global", "none")) stop("correct_elevation must be either 'local','global' or 'none'.")
 
   # optionally perform an elevation correction to maximize the chance that roots are low
-  if(correct_elevation){
+  if(correct_elevation == "local"){
     # subset the lower 2 meters of the point cloud
     sub = las@data[Z <= min(Z)+2]
     # cluster the subset point cloud
@@ -94,12 +101,13 @@ wang_clustering = function(las,graph,heigth_th_merge_roots = 0.5,distance_th_mer
     rm(sub)
     # define a new field with corrected elevation
     las@data[,norm_Z := Z-min(Z), by = cluster]
-
-  }else{
-    # if no correction is performed the Z value is selected
+  }
+  if(correct_elevation == "global"){
+    las@data[,norm_Z := Z-min(Z)]
+  }
+  if(correct_elevation == "none"){
     las@data[,norm_Z := Z]
   }
-
 
   # keep index to sort after using key matching
   las@data[,index := 1:nrow(las@data)]

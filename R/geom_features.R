@@ -39,13 +39,17 @@ geom_features = function(las, search_radius, features_list){
     if(!is.character(features_list)) stop("features_list must be character")
   }
 
-  # run the geometric features computation
-  #if(!reticulate::py_available()) reticulate::install_python(version = "3.8.10")
-  #if(!reticulate::py_module_available("jakteristics")) reticulate::py_install("jakteristics")
-  #reticulate::use_python_version("3.8.10")
+  if(!reticulate::py_module_available("jakteristics")){
+    stop(
+      "The geom_features function relies on the jakteristics python package
+      to compute the geometric features of the point cloud. Please refer to the
+      https://github.com/Blecigne/lidUrb to find some help about how to install
+      it."
+    )
+  }
 
-  features = data.table::data.table(reticulate::py_run_file(system.file("python/jakteristics/docs/conf.py", package="lidUrb"))
-                                    [["jakteristics"]][["compute_features"]](as.matrix(las@data[,1:3]),search_radius))
+  jak = reticulate::import("jakteristics")
+  features = data.table::data.table(jak$compute_features(as.matrix(las@data[,1:3]),search_radius))
 
   # name the geometric features
   data.table::setnames(features,c(

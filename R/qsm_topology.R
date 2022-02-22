@@ -10,7 +10,7 @@
 #' @examples
 #' \donttest{
 #' # import the obj file output from adTree
-#' file = system.file("extdata", "adtree_qsm.obj", package="lidUrb")
+#' file = system.file("extdata", "adtree_qsm", package="lidUrb")
 #' mesh = Morpho::obj2mesh(file)
 #'
 #' # transform the adTree mesh into a qsm file, simplify the mesh and compute
@@ -18,13 +18,13 @@
 #' qsm = lidUrb::adtree2qsm(mesh)
 #'
 #' # compute qsm topology
-#' qsm$qsm = lidUrb::qsm_topology(qsm$qsm)
+#' qsm$qsm = lidUrb::qsm_topology(qsm)
 #'
 #' rgl::open3d()
-#' rgl::shade3d(qsm$mesh,col=rep(qsm$qsm$branching_order,each=20),meshColor = "faces",add=T)
+#' rgl::shade3d(qsm$mesh,col=rep(qsm$QSM$branching_order,each=20),meshColor = "faces",add=TRUE)
 #'
 #' rgl::open3d()
-#' rgl::shade3d(qsm$mesh,col=rep(qsm$qsm$axis_ID,each=20),meshColor = "faces",add=T)
+#' rgl::shade3d(qsm$mesh,col=rep(qsm$QSM$axis_ID,each=20),meshColor = "faces",add=TRUE)
 #' }
 qsm_topology = function(QSM_file){
 
