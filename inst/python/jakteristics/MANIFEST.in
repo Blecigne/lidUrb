@@ -1,5 +1,0 @@
-include pyproject.toml
-include HISTORY.rst
-include README.rst
-include requirements.txt
-recursive-include jakteristics/ckdtree *

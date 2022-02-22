@@ -1,4 +1,0 @@
-laspy>=2.1.1
-scipy
-typer
-Cython>=0.25
