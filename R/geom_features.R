@@ -49,7 +49,13 @@ geom_features = function(las, search_radius, features_list){
   }
 
   jak = reticulate::import("jakteristics")
-  features = data.table::data.table(jak$compute_features(as.matrix(las@data[,1:3]),search_radius))
+  features = data.table::data.table(
+    jak$compute_features(as.matrix(las@data[,1:3]),
+    search_radius = search_radius,
+    feature_names = c("eigenvalue_sum", "omnivariance", "eigenentropy", "anisotropy", "planarity",
+      "linearity", "PCA1", "PCA2", "surface_variation", "sphericity", "verticality",
+      "nx", "ny", "nz")
+  ))
 
   # name the geometric features
   data.table::setnames(features,c(
